@@ -36,16 +36,12 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('company_profile', [trackingController::class, 'compro']);
-
-Route::get('tracking', [trackingController::class, 'index'])->name('get-tracking');
-Route::get('scantracking', [trackingController::class, 'scan'])->name('scan-tracking');
-Route::post('tracking', [trackingController::class, 'search'])->name('post-tracking');
 
 Auth::routes([
     'register' => false,
     'password.request' => false,
 ]);
+require __DIR__ . '/frontend/landing.php';
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
