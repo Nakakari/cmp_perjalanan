@@ -330,6 +330,7 @@ a:focus {
 
 .span3 {
   width: 220px;
+    flex: 1;
 }
 
 .span2 {

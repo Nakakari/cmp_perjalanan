@@ -51,8 +51,4 @@ class trackingController extends Controller
             return response()->json($e);
         }
     }
-
-    public function compro(){
-        return view('Customer.compro.v_compro');
-    }
 }
