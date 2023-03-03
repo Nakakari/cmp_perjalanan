@@ -14,19 +14,19 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            instansiSeeder::class,
             jenisJabatanSeeder::class,
-            // cabangSeeder::class,
+             cabangSeeder::class,
             penggunaSeeder::class,
+            instansiSeeder::class,
             memberSalesSeeder::class,
-            // bankSeeder::class,
+             bankSeeder::class,
             tipePembayaranSeeder::class,
             tipePelayananSeeder::class,
             kondisiResiSeeder::class,
             statusPengirimanSeeder::class,
-            // pelangganSeeder::class,
-            // pengirimanSeeder::class,
-            // resiIdentitasSeeder::class,
+             pelangganSeeder::class,
+             pengirimanSeeder::class,
+             resiIdentitasSeeder::class,
         ]);
     }
 }
