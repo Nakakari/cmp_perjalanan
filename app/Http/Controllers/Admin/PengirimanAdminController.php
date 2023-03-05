@@ -297,4 +297,9 @@ class PengirimanAdminController extends Controller
             report($e);
         }
     }
+
+    public function printNew()
+    {
+        return view('Admin.Pengiriman.print');
+    }
 }

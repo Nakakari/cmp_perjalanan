@@ -122,6 +122,7 @@ Route::group(['middleware' => 'is_admin'], function () {
 
     Route::get('/pengiriman', [PengirimanAdminController::class, 'index']);
     Route::get('/print', [PengirimanAdminController::class, 'print']);
+    Route::get('/printNew', [PengirimanAdminController::class, 'printNew']);
     Route::get('/print2/{id_pengiriman}', [PengirimanAdminController::class, 'print2']);
     Route::post('/data_pengiriman', [PengirimanAdminController::class, 'list_pengiriman']);
     Route::get('/edit_resi/{id_pengiriman}', [PengirimanAdminController::class, 'showData']);
