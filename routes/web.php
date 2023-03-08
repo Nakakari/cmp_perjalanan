@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Sales\KasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\CabangController;
@@ -207,6 +208,14 @@ Route::group(['middleware' => 'is_sales'], function () {
 
     Route::get('/get_status_pengiriman', [DaftarEceranController::class, 'getStatusPengiriman'])->name('get_status_pengiriman');
     Route::post('tambah_muat_eceran', [DaftarEceranController::class, 'store'])->name('muat_eceran.store');
+
+    // Laporan Kas
+    Route::get('/kas/{id_cabang}', [KasController::class, 'index'])->name('kas');
+    Route::post('/list_kas/{id_cabang}', [KasController::class, 'listKas']);
+    Route::get('/addKas/{id_cabang}', [KasController::class, 'add']);
+    Route::post('/upload/kas/{id_cabang}', [KasController::class, 'uploadKas']);
+    Route::get('/detailkas/{id_kas}', [KasController::class, 'detail']);
+    Route::post('/list_detailkas/{id_kas}', [KasController::class, 'listdetailKas']);
 });
 
 Route::group(['middleware' => 'is_checker'], function () {
