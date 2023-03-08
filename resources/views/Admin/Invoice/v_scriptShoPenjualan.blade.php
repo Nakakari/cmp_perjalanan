@@ -196,7 +196,7 @@
                     i : 0;
             };
 
-            // computing column Total of the complete result 
+            // computing column Total of the complete result
             var resi = table.page.info().recordsTotal;
 
             var kilo = api

@@ -131,6 +131,13 @@
                 <div class="menu-title">Cek Koli Turun</div>
             </a>
         </li>
+        <li>
+            <a href="/kas/{{ base64_encode(Auth::user()->id_cabang) }}" class="parent-icon">
+                <div class="parent-icon"><i class='bx bx-wallet'></i>
+                </div>
+                <div class="menu-title">Laporan Kas</div>
+            </a>
+        </li>
     @elseif (Auth::user()->peran == 7)
         <li>
             <a href="/checker/home" class="parent-icon">
