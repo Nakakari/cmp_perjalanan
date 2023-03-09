@@ -31,6 +31,14 @@ class M_cabang extends Model
             ->first();
     }
 
+    public static function getNama($id_cabang)
+    {
+        return DB::table('cabang')
+            ->select(['nama_kota','kode_area'])
+            ->where('id_cabang', $id_cabang)
+            ->first();
+    }
+
     public static function getStatus()
     {
         return DB::table('tbl_status_pengiriman')

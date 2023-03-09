@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Direksi\LaporanController;
 use App\Http\Controllers\Sales\KasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -49,6 +50,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('admin/home', [HomeController::class, 'adminHome'])->name('admin.home')->middleware('is_admin');
 Route::get('sales/home', [HomeController::class, 'salesHome'])->name('sales.home')->middleware('is_sales');
 Route::get('checker/home', [HomeController::class, 'checkerHome'])->name('checker.home')->middleware('is_checker');
+Route::get('direksi/home', [HomeController::class, 'direksiHome'])->name('direksi.home')->middleware('is_direksi');
 
 // -------------------------------ADMIN-------------------------
 Route::group(['middleware' => 'is_admin'], function () {
@@ -146,6 +148,16 @@ Route::group(['middleware' => 'is_admin'], function () {
     Route::post('/update_pelunasan_invoice', [piutangController::class, 'update_pelunasan']);
     Route::get('/history/pembayaran/{id_invoice}', [riwayatPembayaranController::class, 'index'])->name('history.pembayaran');
     Route::post('/list_detail_riwayat_pembayaran/{id_invoice}', [riwayatPembayaranController::class, 'datatables'])->name('history.pembayaran.detail');
+});
+
+Route::group(['middleware' => 'is_direksi'], function () {
+    Route::get('/laporan_kas', [LaporanController::class, 'index']);
+    Route::post('/list_cab', [LaporanController::class, 'listCab']);
+    Route::get('/cabkas/{id_cabang}', [LaporanController::class, 'cabkas']);
+    Route::post('/list_cabkas/{id_cabang}', [LaporanController::class, 'listCabkas']);
+    Route::get('/detail_cabkas/{id_cabang}/{id_kas}', [LaporanController::class, 'detail_cabkas']);
+    Route::post('/list_detail_cabkas/{id_cabang}/{id_kas}', [LaporanController::class, 'listdetailCabkas']);
+    Route::post('/tambah_transfer/{id_cabang}/{id_kas}', [LaporanController::class, 'tambah_transfer']);
 });
 
 Route::group(['middleware' => 'is_sales'], function () {

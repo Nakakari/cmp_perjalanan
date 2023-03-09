@@ -20,7 +20,7 @@ class jenisJabatanSeeder extends Seeder
             'updated_by' => 1,
         ]);
         M_jabatan::create([
-            'nama_jabatan' => 'Direktur',
+            'nama_jabatan' => 'Direksi',
             'created_by' => 1,
             'updated_by' => 1,
         ]);

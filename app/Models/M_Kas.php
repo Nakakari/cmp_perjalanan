@@ -27,7 +27,7 @@ class M_Kas extends Model
 
     public function getListKas($id_cabang)
     {
-        return M_Kas::select([
+        return M_Kas::query()->select([
             'kas.id_kas',
             'kas.tgl_buat',
             'kas.t_kredit',
@@ -36,7 +36,10 @@ class M_Kas extends Model
             'kas.sisa_saldo',
             'kas.transfer',
             'kas.cabang_id',
+            'kas.created_by',
+            'users.name',
         ])
+            ->join('users', 'kas.created_by','=','users.id')
             ->where('kas.cabang_id', $id_cabang)
             ->orderBy('id_kas', "desc");
     }
@@ -72,5 +75,22 @@ class M_Kas extends Model
     {
         $detail = M_Kas::query()->find($id_kas);
         return $detail->tgl_buat;
+    }
+
+    public function getListCab()
+    {
+        return M_Kas::query()->select([
+//            'kas.id_kas',
+            'kas.cabang_id',
+            'cabang.nama_kota',
+            DB::raw('COUNT(IF(kas.cabang_id = cabang.id_cabang, 1, NULL)) as jkas'),
+        ])
+            ->join('cabang','kas.cabang_id','=','cabang.id_cabang')
+            ->groupBy(
+//                'kas.id_kas',
+                'kas.cabang_id',
+                'cabang.nama_kota'
+            )
+            ->orderBy('id_kas', "desc");
     }
 }

@@ -74,6 +74,21 @@
                 <div class="menu-title">Piutang</div>
             </a>
         </li> --}}
+    @elseif (Auth::user()->peran == 2)
+        <li>
+            <a href="/direksi/home" class="parent-icon">
+                <div class="parent-icon"><i class='bx bx-home-circle'></i>
+                </div>
+                <div class="menu-title">Dashboard</div>
+            </a>
+        </li>
+        <li>
+            <a href="/laporan_kas" class="parent-icon">
+                <div class="parent-icon"><i class='bx bx-wallet'></i>
+                </div>
+                <div class="menu-title">Laporan Kas</div>
+            </a>
+        </li>
     @elseif (Auth::user()->peran == 5)
         <li>
             <a href="/sales/home" class="parent-icon">

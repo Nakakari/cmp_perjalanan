@@ -32,6 +32,19 @@ class penggunaSeeder extends Seeder
         ]);
         M_pengguna::create([
             'uuid' => Uuid::uuid4()->toString(),
+            'name' => 'Direksi',
+            'peran' => 2,
+            'email' => 'direksi@dir.com',
+            'password' => Hash::make('12345678'),
+            'file_foto' => 'avatar1.png',
+            'tgl_lhr' => Carbon::now(),
+            'alamat' => '-',
+            'id_cabang' => 1,
+            'created_by' => 1,
+            'updated_by' => 1,
+        ]);
+        M_pengguna::create([
+            'uuid' => Uuid::uuid4()->toString(),
             'name' => 'Sales',
             'peran' => 5,
             'email' => 'sales@gmail.com',
