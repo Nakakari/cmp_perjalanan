@@ -63,4 +63,13 @@ class HomeController extends Controller
         ];
         return view('checkerHome', $data);
     }
+
+    public function direksiHome()
+    {
+        $data = [
+            'cab' => M_cabang::getAll(),
+            'jab' => M_jabatan::getJab(),
+        ];
+        return view('direksiHome', $data);
+    }
 }

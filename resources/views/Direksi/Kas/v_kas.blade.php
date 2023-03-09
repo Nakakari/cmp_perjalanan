@@ -19,9 +19,9 @@
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><a href="/admin/home"><i class="bx bx-home-alt"></i></a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">Laporan Kas</li>
+                    <li class="breadcrumb-item"><a href="/direksi/home"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item"><a href="/laporan_kas">Laporan Kas Cabang</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Laporan Kas Cabang {{$ncabang->nama_kota}}</li>
                 </ol>
             </nav>
         </div>
@@ -69,19 +69,11 @@
                 <div>
                     <h6 class="mb-2">Laporan Kas</h6>
                     <div class="col-12">
-                        @foreach ($cab as $ca)
-                            @if (Auth::user()->id_cabang == $ca->id_cabang)
-                                <p>Daftar laporan kas dari cabang <b>{{ $ca->nama_kota }}
-                                        ({{ $ca->kode_area }})
-                                    </b>
-                                </p>
-                            @endif
-                        @endforeach
+                        <p>Daftar laporan kas dari cabang <b>{{ $ncabang->nama_kota }}
+                                ({{ $ncabang->kode_area }})
+                            </b>
+                        </p>
                     </div>
-                </div>
-                <div class="dropdown ms-auto mb-2">
-                    <button id="proses-data" class="btn btn-warning" onclick="prosesData()" disabled>Tambah
-                        Data</button>
                 </div>
             </div>
             <div class="table-responsive">
@@ -93,6 +85,7 @@
                         <th>Total Kredit</th>
                         <th>Total Debet</th>
                         <th>Sisa Saldo</th>
+                        <th>Dibuat Oleh</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -103,12 +96,67 @@
         </div>
     </div>
 @stop
+@section('modal')
+    @foreach ($kas as $k)
+        <div class="modal fade" id="modalEdit{{ $k->id_kas }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Tambah Transfer</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card border-top border-0 border-4 border-primary">
+                            <div class="card-body p-5">
+                                <div class="card-title d-flex align-items-center">
+                                    <div><i class="lni lni-wallet me-1 font-22 text-primary"></i>
+                                    </div>
+                                    <h5 class="mb-0 text-primary">Tambah Transfer</h5>
+                                </div>
+                                <hr>
+                                <form class="row g-3" action="/tambah_transfer/{{base64_encode($id_cabang)}}/{{ $k->id_kas }}" method="POST"
+                                      enctype="multipart/form-data">
+                                    {{ csrf_field() }}
+                                    <div class="col-md-6">
+                                        <label for="inputAddress" class="form-label">Keterangan Transfer</label>
+                                        <input type="hidden" name="id_kas" value="{{ $k->id_kas }}">
+                                        <input id="keterangan" type="text"
+                                               class="form-control @error('keterangan') is-invalid @enderror" name="keterangan" required>
+                                        @error('keterangan')
+                                        <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="sisa_saldo" class="form-label">Nominal Transfer</label>
+                                        <div class="input-group flex-nowrap">
+                                            <span class="input-group-text" id="addon-wrapping">Rp</span>
+                                            <input id="nominal" type="text" class="form-control" name="nominal" value="{{ old('nominal') ?? 0 }}"
+                                                   onkeyup="this.value = formatCurrency(this.value);" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary ">Simpan</button>
+                                        <button type="button" class="btn btn-danger"
+                                                data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+@stop
 @section('js')
     <script type="text/javascript">
-        $(document).ready(function() {
-            let bisa = {{$bisakah}};
-            $("#proses-data").prop('disabled', bisa)
-        });
+        var last = {{$last['id_kas']}};
+
         let list_kas = [];
 
         const table = $("#kas-dt").DataTable({
@@ -127,7 +175,7 @@
             ],
             "scrollX": true,
             "ajax": {
-                url: "{{ url('/list_kas/' . base64_encode($id_cabang)) }}",
+                url: "{{ url('/list_cabkas/' . base64_encode($id_cabang)) }}",
                 type: "POST",
                 data: function(d) {
                     d._token = "{{ csrf_token() }}"
@@ -188,17 +236,32 @@
                         return 'Rp '+sisasaldo;
                     }
                 }
-            }, {
+            },{
                 "targets": 5,
+                "data": "name",
+                "sortable": false,
+                "render": function(data, type, row, meta) {
+                    return data;
+                }
+            }, {
+                "targets": 6,
                 "data": "id_kas",
                 "sortable": false,
                 "render": function(data, type, row, meta) {
-                    var url = "/detailkas/" + btoa(row.id_kas)
-                    return `<div class="d-flex order-actions">
+                    var url = "{{ url('/detail_cabkas/' . base64_encode($id_cabang)) }}/" + btoa(data)
+
+                    if (data == last){
+                        return `<div class="d-flex order-actions">
+                            <a href=` + url + ` class="ms-3"><i class='lni lni-eye'></i></a>
+                            <a href="javascript:;" class="ms-3" data-bs-toggle="modal" data-bs-target="#modalEdit${data}"><i class='bx bxs-edit'></i></a>
+                        </div>`;
+                    } else{
+                        return `<div class="d-flex order-actions">
                             <a href=` + url + ` class="ms-3"><i class='lni lni-eye'></i></a>
                         </div>`;
+                    }
                 }
-            }
+            },
             ]
         });
 

@@ -19,9 +19,10 @@
         <div class="ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0 p-0">
-                    <li class="breadcrumb-item"><a href="/admin/home"><i class="bx bx-home-alt"></i></a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">Laporan Kas</li>
+                    <li class="breadcrumb-item"><a href="/direksi/home"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item"><a href="/laporan_kas">Laporan Kas Cabang</a></li>
+                    <li class="breadcrumb-item"><a href="/cabkas/{{base64_encode($id_cabang)}}">Laporan Kas Cabang {{$ncabang->nama_kota}}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detail Laporan Kas Cabang {{$ncabang->nama_kota}}, tanggal {{$tgl}}</li>
                 </ol>
             </nav>
         </div>
@@ -67,21 +68,7 @@
             @endif
             <div class="d-flex align-items-center">
                 <div>
-                    <h6 class="mb-2">Laporan Kas</h6>
-                    <div class="col-12">
-                        @foreach ($cab as $ca)
-                            @if (Auth::user()->id_cabang == $ca->id_cabang)
-                                <p>Daftar laporan kas dari cabang <b>{{ $ca->nama_kota }}
-                                        ({{ $ca->kode_area }})
-                                    </b>
-                                </p>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-                <div class="dropdown ms-auto mb-2">
-                    <button id="proses-data" class="btn btn-warning" onclick="prosesData()" disabled>Tambah
-                        Data</button>
+                    <h6 class="mb-2">Detail Laporan Kas Cabang {{$ncabang->nama_kota}} Tanggal {{$tgl}}</h6>
                 </div>
             </div>
             <div class="table-responsive">
@@ -89,11 +76,9 @@
                     <thead class="table-light">
                     <tr>
                         <th>No</th>
-                        <th>Tanggal Buat</th>
-                        <th>Total Kredit</th>
-                        <th>Total Debet</th>
-                        <th>Sisa Saldo</th>
-                        <th>Action</th>
+                        <th>Keterangan</th>
+                        <th>Kredit</th>
+                        <th>Debet</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -105,10 +90,6 @@
 @stop
 @section('js')
     <script type="text/javascript">
-        $(document).ready(function() {
-            let bisa = {{$bisakah}};
-            $("#proses-data").prop('disabled', bisa)
-        });
         let list_kas = [];
 
         const table = $("#kas-dt").DataTable({
@@ -127,7 +108,7 @@
             ],
             "scrollX": true,
             "ajax": {
-                url: "{{ url('/list_kas/' . base64_encode($id_cabang)) }}",
+                url: "{{ url('/list_detail_cabkas/' . base64_encode($id_cabang) . '/' . base64_encode($id_kas)) }}",
                 type: "POST",
                 data: function(d) {
                     d._token = "{{ csrf_token() }}"
@@ -135,7 +116,7 @@
             },
             "columnDefs": [{
                 "targets": 0,
-                "data": "id_kas",
+                "data": "id_detail_kas",
                 "sortable": false,
                 "render": function(data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
@@ -143,14 +124,14 @@
                 }
             }, {
                 "targets": 1,
-                "data": "tgl_buat",
+                "data": "keterangan",
                 "sortable": false,
                 "render": function(data, type, row, meta) {
                     return data;
                 }
             }, {
                 "targets": 2,
-                "data": "t_kredit",
+                "data": "kredit",
                 "sortable": false,
                 "render": function(data, type, row, meta) {
                     var kredit = new Intl.NumberFormat(['ban', 'id']).format(data);
@@ -162,52 +143,22 @@
                 }
             }, {
                 "targets": 3,
-                "data": "t_debet",
+                "data": "debet",
                 "sortable": false,
                 "render": function(data, type, row, meta) {
                     var debet = new Intl.NumberFormat(['ban', 'id']).format(data);
-
-                    if (row.transfer != null) {
-                        var tf = new Intl.NumberFormat(['ban', 'id']).format(row.transfer);
-                        return 'Rp '+debet+' + Rp '+tf;
-                    } else if (debet == 0) {
+                    if (debet == 0) {
                         return 'Rp '+0;
                     } else {
                         return 'Rp '+debet;
                     }
                 }
-            },{
-                "targets": 4,
-                "data": "sisa_saldo",
-                "sortable": false,
-                "render": function(data, type, row, meta) {
-                    var sisasaldo = new Intl.NumberFormat(['ban', 'id']).format(data);
-                    if (sisasaldo == 0) {
-                        return 'Rp '+0;
-                    } else {
-                        return 'Rp '+sisasaldo;
-                    }
-                }
-            }, {
-                "targets": 5,
-                "data": "id_kas",
-                "sortable": false,
-                "render": function(data, type, row, meta) {
-                    var url = "/detailkas/" + btoa(row.id_kas)
-                    return `<div class="d-flex order-actions">
-                            <a href=` + url + ` class="ms-3"><i class='lni lni-eye'></i></a>
-                        </div>`;
-                }
-            }
+            },
             ]
         });
 
         function filter() {
             table.ajax.reload(null, false)
-        }
-
-        function prosesData() {
-            window.location.href = "{{ url('/addKas/' . base64_encode($id_cabang)) }}";
         }
     </script>
 @stop

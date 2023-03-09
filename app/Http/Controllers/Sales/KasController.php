@@ -45,10 +45,6 @@ class KasController extends Controller
         if (request()->input("search.value")) {
             $data = $data->where(function ($query) {
                 $query->whereRaw('LOWER(kas.tgl_buat) like ?', ['%' . strtolower(request()->input("search.value")) . '%']);
-//                    ->orWhereRaw('LOWER(pengiriman.no_resi_manual) like ?', ['%' . strtolower(request()->input("search.value")) . '%'])
-//                    ->orWhereRaw('LOWER(pengiriman.nama_pengirim) like ?', ['%' . strtolower(request()->input("search.value")) . '%'])
-//                    ->orWhereRaw('LOWER(pengiriman.nama_penerima) like ?', ['%' . strtolower(request()->input("search.value")) . '%'])
-//                    ->orWhereRaw('LOWER(pengiriman.kota_penerima) like ?', ['%' . strtolower(request()->input("search.value")) . '%']);
             });
         }
 
